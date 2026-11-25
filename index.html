@@ -198,7 +198,7 @@ pre.tab{position:relative;line-height:1.35em;font-size:13px;font-family:ui-monos
 .ring div{position:relative;text-align:center;line-height:1.1}.ring b{font-size:20px}.ring small{display:block;font-size:10px;color:var(--mut)}
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);gap:3px;margin-top:8px;overflow-x:auto}
 .heat i{width:11px;height:11px;border-radius:3px;background:var(--fill)}
-.heat i.l1{background:var(--ac2)}.heat i.l2{background:color-mix(in srgb,var(--ac) 65%,transparent)}.heat i.l3{background:var(--ac)}.heat i.td{outline:1.5px solid var(--tx);outline-offset:-1px}
+.heat i.l1{background:var(--ac2)}.heat i.l2{background:var(--ac);opacity:.65}.heat i.l3{background:var(--ac)}.heat i.td{outline:1.5px solid var(--tx);outline-offset:-1px}
 .accrow{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:15px}.accrow b{width:56px}.accrow .pbar{flex:1;margin:0}
 /* stüdyo */
 .recbtn{width:84px;height:84px;border-radius:50%;border:4px solid var(--mut2);background:transparent;position:relative;cursor:pointer;color:transparent;font-size:0}
@@ -232,8 +232,9 @@ pre.tab{position:relative;line-height:1.35em;font-size:13px;font-family:ui-monos
 const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k,d){try{const v=localStorage.getItem('perde.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('perde.'+k,JSON.stringify(v))}catch(e){}}};
-const S=Object.assign({lang:(navigator.language||'tr').toLowerCase().startsWith('tr')?'tr':'en',tab:'tune',tool:'met',left:false,a4:440,notation:'letter',acc:'sharp',inst:'guitar',tun:0,sens:.6,fav:[],hist:[],custom:[],prog:{},best:{},bpm:100,sig:'4/4',msound:'click',font:17,chInst:'guitar',set:['Em','Am','C','G','D','E','A','Dm'],tt:{on:false,target:140,every:4,inc:5},mtr:{on:false,play:3,rest:1},poly:{on:false,n:3},msub:1,mflash:false,presets:[],tol:4,tview:'needle',theme:'system',strings:null,studio:'rec',days:{},goal:15,cstat:{},plan:null,daily:null,ron:false,rtime:'19:00',ctpl:{}},store.get('settings',{}));
+const S=Object.assign({lang:(navigator.language||'tr').toLowerCase().startsWith('tr')?'tr':'en',tab:'tune',tool:'met',left:false,a4:440,notation:'letter',acc:'sharp',inst:'guitar',tun:0,sens:.75,fav:[],hist:[],custom:[],prog:{},best:{},bpm:100,sig:'4/4',msound:'click',font:17,chInst:'guitar',set:['Em','Am','C','G','D','E','A','Dm'],tt:{on:false,target:140,every:4,inc:5},mtr:{on:false,play:3,rest:1},poly:{on:false,n:3},msub:1,mflash:false,presets:[],tol:3,tview:'needle',theme:'system',strings:null,studio:'rec',days:{},goal:15,cstat:{},plan:null,daily:null,ron:false,rtime:'19:00',ctpl:{}},store.get('settings',{}));
 const save=()=>store.set('settings',S);
+if(![1,3,5].includes(S.tol))S.tol=3;
 const L=s=>s.includes('|')?s.split('|')[S.lang==='tr'?0:1]:s;
 const pick=o=>typeof o==='string'?L(o):(o[S.lang]||o.tr);
 const median=a=>{const b=[...a].sort((x,y)=>x-y);return b[b.length>>1]};
@@ -300,7 +301,7 @@ const INST=[
 {id:'requinto',n:'Requinto',t:[['Standart (ADGCEA)|Standard (ADGCEA)','A2 D3 G3 C4 E4 A4']]},
 {id:'tres',n:'Tres cubano',t:[['Standart (GCE)|Standard (GCE)','G3 C4 E4']]},
 {id:'baglama',n:'Bağlama / Saz',oct:1,t:[['Bağlama düzeni (Üst La · Orta Sol · Alt Re)|Bağlama düzeni (A · G · D)','A3 G3 D3'],['Bozuk düzen (Üst Sol · Orta Re · Alt La)|Bozuk düzen (G · D · A)','G3 D3 A3'],['Misket düzeni (Fa# · Re · La)|Misket düzeni (F# · D · A)','F#3 D3 A3'],['Fa müstezat (Fa · Re · La)|Fa müstezat (F · D · A)','F3 D3 A3'],['Do müstezat (Sol · Do · La)|Do müstezat (G · C · A)','G3 C3 A3'],['Abdal düzeni (La · La · Sol)|Abdal düzeni (A · A · G)','A3 A3 G3'],['Zurna düzeni (Re · Re · La)|Zurna düzeni (D · D · A)','D3 D3 A3'],['Aşık düzeni (Mi · Re · La)|Aşık düzeni (E · D · A)','E3 D3 A3']]},
-{id:'oud',n:'Ud|Oud',oct:1,t:[['Türk – Bolahenk (C#F#BEAD)|Turkish – Bolahenk (C#F#BEAD)','C#2 F#2 B2 E3 A3 D4'],['Türk (EABEAD)|Turkish (EABEAD)','E2 A2 B2 E3 A3 D4'],['Arap (DGADGC)|Arabic (DGADGC)','D2 G2 A2 D3 G3 C4'],['Arap (CFADGC)|Arabic (CFADGC)','C2 F2 A2 D3 G3 C4']]}];
+{id:'oud',n:'Ud|Oud',t:[['Türk – Bolahenk (C#F#BEAD)|Turkish – Bolahenk (C#F#BEAD)','C#2 F#2 B2 E3 A3 D4'],['Türk (EABEAD)|Turkish (EABEAD)','E2 A2 B2 E3 A3 D4'],['Arap (DGADGC)|Arabic (DGADGC)','D2 G2 A2 D3 G3 C4'],['Arap (CFADGC)|Arabic (CFADGC)','C2 F2 A2 D3 G3 C4']]}];
 const instById=id=>INST.find(i=>i.id===id)||INST[0];
 const curInst=()=>instById(S.inst);
 function tuningsOf(inst){return inst.t.map(([n,s])=>({n:L(n),notes:s.split(' ').map(parseNote)})).concat((S.custom||[]).filter(c=>c.inst===inst.id).map(c=>({n:c.n,notes:c.notes,custom:c.id})))}
@@ -339,22 +340,29 @@ const Mic={on:false,
   try{this.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}catch(e){toast(t('micErr'));return false}
   this.src=a.createMediaStreamSource(this.stream);this.an=a.createAnalyser();this.an.fftSize=4096;this.an2=a.createAnalyser();this.an2.fftSize=8192;this.an2.smoothingTimeConstant=.5;this.src.connect(this.an);this.src.connect(this.an2);this.buf=new Float32Array(4096);this.fbuf=new Float32Array(4096);this.on=true;return true},
  stop(){if(!this.on)return;this.stream.getTracks().forEach(x=>x.stop());try{this.src.disconnect()}catch(e){}this.on=false}};
-const gate=()=>.0012+(1-S.sens)*.02;
+/* uyarlanır eşik: ortam gürültüsünü (perdesiz karelerin RMS'i) izler */
+let NF=.002;const gate=()=>Math.max(.0004,NF*(1.15+(1-S.sens)*1.2));const clarMin=()=>.42+(1-S.sens)*.3;
+function nfUpdate(rms,pitched){if(rms<NF)NF=NF*.8+rms*.2;else if(!pitched)NF=Math.min(rms,NF*1.03)}
 const dsB=new Float32Array(2048),nsdf=new Float32Array(1100);
-function detectPitch(b,sr){const n=b.length>>1;for(let i=0;i<n;i++)dsB[i]=(b[2*i]+b[2*i+1])*.5;const x=dsB,s2=sr/2,W=1024,maxLag=Math.min(Math.floor(s2/27),n-W-1);
- let e=0;for(let i=0;i<W;i++)e+=x[i]*x[i];if(Math.sqrt(e/W)<gate())return null;
+/* 31 dokunuşlu Hamming pencereli alçak geçiren (≈0.2·fs): 2× alt-örneklemede aliasing'i önler */
+const AAF=(()=>{const N=31,h=[],fc=.2;let s=0;for(let i=0;i<N;i++){const k=i-(N-1)/2,v=(k?Math.sin(2*Math.PI*fc*k)/(Math.PI*k):2*fc)*(.54-.46*Math.cos(2*Math.PI*i/(N-1)));h.push(v);s+=v}return h.map(v=>v/s)})();
+function detectPitch(b,sr){const n=b.length>>1,H=AAF.length,hl=H>>1;for(let i=0;i<n;i++){let a=0;const c=2*i;for(let k=0;k<H;k++){const j=c+k-hl;if(j>=0&&j<b.length)a+=b[j]*AAF[k]}dsB[i]=a}
+ const x=dsB,s2=sr/2,W=1024,maxLag=Math.min(Math.floor(s2/27),n-W-1);
+ let e=0;for(let i=0;i<W;i++)e+=x[i]*x[i];const rms=Math.sqrt(e/W);if(rms<gate()){nfUpdate(rms,false);return null}
  for(let tau=1;tau<=maxLag;tau++){let r=0,m=0;for(let i=0;i<W;i++){const p=x[i],q=x[i+tau];r+=p*q;m+=p*p+q*q}nsdf[tau]=m>0?2*r/m:0}
  let i=1;while(i<maxLag&&nsdf[i]>0)i++;
  const peaks=[];let inP=false,best=0,bv=-1;
  for(;i<maxLag;i++){if(nsdf[i]>0){if(!inP){inP=true;bv=-1}if(nsdf[i]>bv){bv=nsdf[i];best=i}}else if(inP){inP=false;peaks.push(best)}}
- if(!peaks.length)return null;let gm=0;for(const p of peaks)gm=Math.max(gm,nsdf[p]);if(gm<.55)return null;
- const p=peaks.find(p=>nsdf[p]>=.88*gm);
+ if(inP&&best<maxLag-2)peaks.push(best); /* çok kalın teller: tepe pencere sonuna yakın */
+ if(!peaks.length){nfUpdate(rms,false);return null}let gm=0;for(const p of peaks)gm=Math.max(gm,nsdf[p]);if(gm<clarMin()){nfUpdate(rms,false);return null}
+ nfUpdate(rms,true);lastSound=Date.now();const p=peaks.find(p=>nsdf[p]>=.88*gm);
+ const sub=[2,3].map(m=>{const q=peaks.find(q=>Math.abs(q-m*p)<=Math.max(2,m*p*.03));return{m,v:q?nsdf[q]:0}});
  /* tam örnekleme hızında ince ayar */
  const W2=2048,lo=Math.max(2,2*p-3),hi=Math.min(b.length-W2-2,2*p+3),nf=tau=>{let r=0,m=0;for(let i=0;i<W2;i++){const u=b[i],v=b[i+tau];r+=u*v;m+=u*u+v*v}return m>0?2*r/m:0};
  let bt=lo,bvv=-2;const vals={};for(let tau=lo-1;tau<=hi+1;tau++){vals[tau]=nf(tau);if(tau>=lo&&tau<=hi&&vals[tau]>bvv){bvv=vals[tau];bt=tau}}
  const a1=vals[bt-1],b1=vals[bt],c1=vals[bt+1],den=a1-2*b1+c1,sh=den?.5*(a1-c1)/den:0;
- return{f:sr/(bt+sh),clarity:b1}}
-function readChroma(){if(!Mic.on)return null;const a=ac(),an=Mic.an2,fb=Mic.fbuf;Mic.an.getFloatTimeDomainData(Mic.buf);let e=0;for(let i=0;i<Mic.buf.length;i++)e+=Mic.buf[i]*Mic.buf[i];if(Math.sqrt(e/Mic.buf.length)<gate()*1.5)return null;
+ return{f:sr/(bt+sh),clarity:b1,v0:nsdf[p],sub}}
+function readChroma(){if(!Mic.on)return null;const a=ac(),an=Mic.an2,fb=Mic.fbuf;Mic.an.getFloatTimeDomainData(Mic.buf);let e=0;for(let i=0;i<Mic.buf.length;i++)e+=Mic.buf[i]*Mic.buf[i];const rr=Math.sqrt(e/Mic.buf.length);if(rr<.0065+(1-S.sens)*.03)return null;lastSound=Date.now()
  an.getFloatFrequencyData(fb);const bin=a.sampleRate/an.fftSize,c=new Float32Array(12),lo=Math.max(2,Math.ceil(75/bin)),hi=Math.min(fb.length-2,Math.floor(1100/bin));
  const pk=[];for(let k=lo;k<=hi;k++){const v=fb[k];if(v<-85||v<fb[k-1]||v<fb[k+1])continue;pk.push([k*bin,Math.pow(10,v/20)])}
  const near=f=>{let m=0;for(const p of pk)if(Math.abs(p[0]-f)<f*.03&&p[1]>m)m=p[1];return m};let bm=0;const low=[];
@@ -375,20 +383,20 @@ function fingering(f){const fr=[];f.forEach((x,i)=>{if(x>0)fr.push(i)});const fi
  let pi=-1;for(const i of rest){if(pi>=0&&f[pi]===f[i]&&Math.abs(pi-i)===1&&next>4){fing[i]=fing[pi];pi=i;continue}const fg=Math.max(next,f[i]-mn+1);if(fg>4){if(pi>=0&&f[pi]===f[i]){fing[i]=fing[pi];pi=i;continue}return null}fing[i]=fg;next=fg+1;pi=i}
  return{fing,count:next-1,barre}}
 const vC={};
-function voicings(tun,ch,instId){const key=instId+tun.join(',')+'|'+ch.root+ch.q;if(vC[key])return vC[key];
+function voicings(tun,ch,instId,span=3){const key=instId+tun.join(',')+'|'+ch.root+ch.q+'|'+span;if(vC[key])return vC[key];
  const inst=instById(instId),iv=QUAL[ch.q]||QUAL[''],pcs=iv.map(i=>mod12(ch.root+i)),req=REQ[ch.q]?REQ[ch.q].map(i=>mod12(ch.root+i)):iv.length>=4?pcs.filter((p,k)=>iv[k]!==7):pcs,n=tun.length,power=ch.q==='5';
- const maxMute=n>=6?(power?n-2:2):n===5?1:0,minSound=power?2:Math.min(n,3),out=[],seen=new Set(),cur=new Array(n);
+ const maxMute=n>=7?(power?n-2:n-4):n>=6?(power?n-2:2):n===5?1:0,minSound=power?2:Math.min(n,3),out=[],seen=new Set(),cur=new Array(n);
  function chk(){let a=0;while(a<n&&cur[a]<0)a++;let b=n-1;while(b>=0&&cur[b]<0)b--;if(a>b)return;for(let i=a;i<=b;i++)if(cur[i]<0)return;
   const mutes=n-(b-a+1);if(mutes>maxMute||(!power&&b<n-1)||b-a+1<minSound)return;if(inst.br&&mod12(tun[a]+cur[a])!==ch.root)return;
   const have=new Set();for(let i=a;i<=b;i++)have.add(mod12(tun[i]+cur[i]));for(const p of req)if(!have.has(p))return;
-  const fr=[];for(let i=a;i<=b;i++)if(cur[i]>0)fr.push(cur[i]);const mn=fr.length?Math.min(...fr):0,mx=fr.length?Math.max(...fr):0;if(mx-mn>3)return;
+  const fr=[];for(let i=a;i<=b;i++)if(cur[i]>0)fr.push(cur[i]);const mn=fr.length?Math.min(...fr):0,mx=fr.length?Math.max(...fr):0;if(mx-mn>span)return;
   const fi=fingering(cur);if(!fi)return;const k=cur.join(',');if(seen.has(k))return;seen.add(k);
   let fa=-1,fb=-1,inner=0,opens=0;for(let i=a;i<=b;i++)if(cur[i]>0){if(fa<0)fa=i;fb=i}for(let i=a;i<=b;i++)if(cur[i]===0){opens++;if(i>fa&&i<fb&&fa>=0)inner++}
   const sc=power?mn*2.2+(mx-mn)*1.2+fi.count+Math.abs(b-a+1-3):mn*2.2+(mx-mn)*1.2+fi.count+mutes*1.2-(b-a+1)+(fi.barre?1.5:0)-(fr.length?0:1)+inner+(mx>=4&&opens?2.5:0);
   out.push({f:cur.slice(),fi:fi.fing,barre:fi.barre,sc})}
- for(let base=0;base<=12;base++){const opts=tun.map(tt=>{const o=[];if(maxMute)o.push(-1);if(pcs.includes(mod12(tt)))o.push(0);for(let f=Math.max(1,base);f<=base+3;f++)if(pcs.includes(mod12(tt+f)))o.push(f);return o});
+ for(let base=0;base<=12;base++){const opts=tun.map(tt=>{const o=[];if(maxMute)o.push(-1);if(pcs.includes(mod12(tt)))o.push(0);for(let f=Math.max(1,base);f<=base+span;f++)if(pcs.includes(mod12(tt+f)))o.push(f);return o});
   (function rec(s){if(s===n){chk();return}for(const f of opts[s]){cur[s]=f;rec(s+1)}})(0)}
- out.sort((x,y)=>x.sc-y.sc);
+ if(!out.length&&span<4)return vC[key]=voicings(tun,ch,instId,4);out.sort((x,y)=>x.sc-y.sc);
  const cn=tun.join()==='40,45,50,55,59,64'&&CANON[SH[ch.root]+ch.q];
  if(cn){const f=[...cn].map(x=>x==='x'?-1:parseInt(x,36));const i=out.findIndex(o=>o.f.join()===f.join());const v=i>=0?out.splice(i,1)[0]:voicingFromFrets(f);out.unshift(v)}
  return vC[key]=out.slice(0,8)}
@@ -423,7 +431,7 @@ function parseTab(text){const L0=text.split(/\r?\n/),sys=[];let cur=[];L0.forEac
   systems.push({first:s[0].li,last:s[n-1].li,off,len,start:st});off+=len});
  ev.sort((a,b)=>a.col-b.col);return{ev,systems,total:off}}
 const TB={on:false,raf:null,src:[],box:null};
-function tabBoxHTML(text){return`<div class="tabbox" data-text="${esc(text)}"><div class="row"><button class="b sm pri" data-a="tabplay">▶</button><span class="mut small">${t('tab')}</span></div><pre class="tab"><span class="tcur"></span>${esc(text)}</pre></div>`}
+function tabBoxHTML(text){return`<div class="tabbox" data-text="${esc(text)}"><div class="row"><button class="b sm pri" data-a="tabplay" aria-label="${t('play')}">▶</button><span class="mut small">${t('tab')}</span></div><pre class="tab"><span class="tcur"></span>${esc(text)}</pre></div>`}
 function tabStop(){TB.on=false;if(TB.raf)cancelAnimationFrame(TB.raf);TB.src.forEach(s=>{try{s.stop()}catch(e){}});TB.src=[];if(TB.box){const c=$('.tcur',TB.box),b=$('[data-a="tabplay"]',TB.box);if(c)c.style.display='none';if(b)b.textContent='▶'}TB.box=null}
 function tabPlay(box,bpm,loop){tabStop();const P=parseTab(box.dataset.text);if(!P.ev.length){toast(t('noResults'));return}const a=ac(),unit=60/bpm/4,t0=a.currentTime+.12;TB.on=true;TB.box=box;
  P.ev.forEach(e=>TB.src.push(playMidi(e.midi,t0+e.col*unit,.25)));const end=t0+P.total*unit,pre=$('pre',box),cur=$('.tcur',box),btn=$('[data-a="tabplay"]',box);cur.style.display='block';btn.textContent='■';
@@ -464,7 +472,8 @@ function renderTune(){const inst=curInst(),ts=tuningsOf(inst),tn=curTuning();
  <div class="card center ${S.tview==='strobe'?'tv-strobe':''}">${gaugeSVG()}<div class="strobe" id="strobe"><i></i><i></i><i></i></div><div class="tnote" id="tnote">–</div><div class="mut small" id="tinfo">${Mic.on?t('playString'):t('micOff')}</div><div class="thint" id="thint"></div>
  <div class="strings ${TU.mode==='chrom'?'dim':''}" id="strs">${stringBtns(tn)}</div>
  <button class="b big ${Mic.on?'':'pri'}" data-a="mic">${Mic.on?'■ '+t('stop'):'🎤 '+t('start')}</button>
- <div class="mut small mt">${S.a4} Hz · ${esc(L(inst.n))}</div></div>`;
+ <div class="chips wrap mt" style="justify-content:center"><span class="mut small" style="align-self:center">${L('La (A4)|A4')}</span>${[440,442,443].map(v=>`<button class="chip ${S.a4===v?'on':''}" data-a="a4" data-v="${v}">${v} Hz</button>`).join('')}${[440,442,443].includes(S.a4)?'':`<button class="chip on">${S.a4} Hz</button>`}<button class="chip" data-a="cal">${L('Kalibre et|Calibrate')}</button></div>
+ <div class="mut small mt">${esc(L(inst.n))}${inst.fl?' · '+L('Orkestralar çoğunlukla 442–443 Hz kullanır|Orchestras often use 442–443 Hz'):''}</div></div>`;
  $('#inst').onchange=e=>{S.inst=e.target.value;S.tun=0;TU.done.clear();TU.sel=-1;save();renderTune()};
  $('#tun').onchange=e=>{S.tun=+e.target.value;TU.done.clear();TU.sel=-1;save();renderTune()};
  view.onclick=async e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
@@ -472,6 +481,8 @@ function renderTune(){const inst=curInst(),ts=tuningsOf(inst),tn=curTuning();
   else if(a==='ref'){TU.ref=!TU.ref;el.classList.toggle('on',TU.ref)}
   else if(a==='str'){const i=+el.dataset.i;TU.sel=TU.sel===i?-1:i;if(TU.ref&&!TU.dr)playMidi(curTuning().notes[i],0,.3);$('#strs').innerHTML=stringBtns(curTuning());droneSet()}
   else if(a==='tv'){S.tview=el.dataset.v;save();renderTune()}
+  else if(a==='a4'){S.a4=+el.dataset.v;save();renderTune()}
+  else if(a==='cal'){const f=TU.hist.length?median(TU.hist):0;if(!Mic.on||!f){toast(L('Önce mikrofonu aç ve referans La sesini çal|Start the mic and play the reference A first'));return}const m=Math.round(69+12*Math.log2(f/S.a4));if(mod12(m)!==9){toast(L('La (A) sesi algılanmadı|No A note detected'));return}S.a4=Math.round(f*Math.pow(2,(69-m)/12)*2)/2;save();toast('A4 = '+S.a4+' Hz');renderTune()}
   else if(a==='tol'){S.tol=+el.dataset.v;save();renderTune()}
   else if(a==='drone'){if(TU.dr)droneStop();else droneStart();el.classList.toggle('on',!!TU.dr)}
   else if(a==='mic'){if(Mic.on){stopTuner();Mic.stop();renderTune()}else if(await Mic.start()){renderTune();startTuner()}}
@@ -486,20 +497,27 @@ function droneStart(){const a=ac();droneStop();const o=a.createOscillator(),o2=a
 function droneSet(){if(!TU.dr)return;const f=mfreq(droneNote()),t0=ac().currentTime;TU.dr.o.frequency.setTargetAtTime(f,t0,.02);TU.dr.o2.frequency.setTargetAtTime(f*2,t0,.02)}
 function droneStop(){if(!TU.dr)return;const{o,o2,g}=TU.dr,t0=ac().currentTime;g.gain.setTargetAtTime(0,t0,.05);o.stop(t0+.3);o2.stop(t0+.3);TU.dr=null}
 function tunerTick(){const nEl=$('#tnote');if(!nEl||!Mic.on)return;if(TU.dr){const h=$('#thint');if(h){h.textContent=L('∿ Drone çalıyor — kulakla akort et|∿ Drone on — tune by ear');h.className='thint'}nEl.innerHTML=noteHTML(droneNote());TU.live=false;return}const tn=curTuning(),inst=curInst(),g=$('#gauge'),nd=$('#needle'),iEl=$('#tinfo'),hEl=$('#thint');
- Mic.an.getFloatTimeDomainData(Mic.buf);const r=detectPitch(Mic.buf,ac().sampleRate);
+ Mic.an.getFloatTimeDomainData(Mic.buf);let r=detectPitch(Mic.buf,ac().sampleRate);
+ /* enstrümanın aralığı dışındaki (uğultu, gürültü) okumaları yok say */
+ if(r&&TU.mode!=='chrom'){const fs=tn.notes.map(mfreq),lo=Math.min(...fs),hi=Math.max(...fs);if(r.f<lo/2.3||r.f>hi*2.3)r=null}
  if(!r){if(++TU.silent>14){TU.hist=[];TU.hold=0;nd.style.transform='rotate(0deg)';g.className.baseVal='gauge';TU.live=false;$('#strobe').classList.remove('ok');hEl.textContent='';hEl.className='thint';iEl.textContent=t('playString');$$('.str.act').forEach(x=>x.classList.remove('act'))}return}
- TU.silent=0;const h=TU.hist;if(h.length&&Math.abs(1200*Math.log2(r.f/median(h)))>70)h.length=0;h.push(r.f);if(h.length>7)h.shift();const f=median(h);
+ TU.silent=0;
+ /* oktav/beşli güvenliği: daha uzun periyot daha güçlüyse ve bir tele çok daha yakın düşüyorsa onu al */
+ if(TU.mode!=='chrom'&&!inst.oct){const ds=f=>{if(TU.sel>=0)return Math.abs(1200*Math.log2(f/mfreq(tn.notes[TU.sel])));return Math.min(...tn.notes.map(m=>Math.abs(1200*Math.log2(f/mfreq(m)))))};const d0=ds(r.f);
+  for(const s of r.sub){const f2=r.f/s.m,d2=ds(f2);if(s.v>r.v0+.005&&d2<40&&d0>120){r.f=f2;break}}
+  if(TU.sel>=0&&ds(r.f)>600){const c=[r.f*2,r.f/2].map(f=>({f,d:ds(f)})).sort((a,b)=>a.d-b.d)[0];if(c.d<300)r.f=c.f}}
+ const h=TU.hist;if(h.length&&Math.abs(1200*Math.log2(r.f/median(h)))>70)h.length=0;h.push(r.f);if(h.length>7)h.shift();const f=median(h);
  const octFold=c=>inst.oct&&TU.mode!=='chrom'?((c%1200)+1800)%1200-600:c;
  let target,si=-1;
  if(TU.mode==='chrom')target=Math.round(69+12*Math.log2(f/S.a4));
  else if(TU.sel>=0){si=TU.sel;target=tn.notes[si]}
  else{let best=1e9;tn.notes.forEach((m,i)=>{const c=Math.abs(octFold(1200*Math.log2(f/mfreq(m))));if(c<best-.5){best=c;si=i;target=m}})}
- const cents=octFold(1200*Math.log2(f/mfreq(target))),ok=Math.abs(cents)<=(S.tol||4);TU.cents=cents;TU.live=true;$('#strobe').classList.toggle('ok',ok);
- nEl.innerHTML=noteHTML(target);iEl.textContent=`${f.toFixed(1)} Hz · ${cents>0?'+':''}${cents.toFixed(0)} cent`;
+ const cents=octFold(1200*Math.log2(f/mfreq(target))),ok=Math.abs(cents)<=(S.tol||3);TU.cents=cents;TU.live=true;$('#strobe').classList.toggle('ok',ok);
+ nEl.innerHTML=noteHTML(target);const cr=Math.round(cents);iEl.textContent=`${f.toFixed(1)} Hz · ${cr>0?'+':''}${cr||0} cent`;
  nd.style.transform=`rotate(${clamp(cents,-50,50)/50*60}deg)`;g.className.baseVal='gauge '+(ok?'ok':'live');
  hEl.textContent=ok?t('inTune'):cents<0?t('tuneUp'):t('tuneDown');hEl.className='thint '+(ok?'ok':cents<0?'up':'down');
  $$('#strs .str').forEach(b=>b.classList.toggle('act',+b.dataset.i===si));
- if(ok&&si>=0){if(++TU.hold===12&&!TU.done.has(si)){TU.done.add(si);beep();$('#strs').innerHTML=stringBtns(tn);if(TU.done.size===tn.notes.length)toast(t('allTuned'))}}else TU.hold=0}
+ if(ok&&si>=0){if(++TU.hold===12&&!TU.done.has(si)){tn.notes.forEach((m,i)=>{if(inst.oct?mod12(m)===mod12(tn.notes[si]):m===tn.notes[si])TU.done.add(i)});beep();$('#strs').innerHTML=stringBtns(tn);if(TU.done.size===tn.notes.length)toast(t('allTuned'))}}else TU.hold=0}
 function customTuningEditor(){const inst=curInst(),base=curTuning().notes.slice();
  const m=modal(`<h2>${t('customTuning').replace('+ ','')} · ${esc(L(inst.n))}</h2><div class="field"><input type="text" id="ctn" placeholder="${t('name')}" value="${S.lang==='tr'?'Benim akordum':'My tuning'}"></div><div class="tnedit" id="cte"></div><div class="row end mt"><button class="b" data-x>${t('cancel')}</button><button class="b pri" data-s>${t('save')}</button></div>`);
  const draw=()=>{$('#cte',m).innerHTML=base.map((n,i)=>`<div class="s"><button class="b sm" data-u="${i}">▲</button><b>${noteHTML(n)}</b><button class="b sm" data-d="${i}">▼</button></div>`).join('')};draw();
@@ -551,7 +569,7 @@ const DRUMS={
  country:{n:'Country',sub:4,k:'x.......x.......',s:'..x...x...x...x.',h:'x.x.x.x.x.x.x.x.'},
  shuffle:{n:'Blues shuffle',sub:3,k:'x.....x.....',s:'...x.....x..',h:'x.xx.xx.xx.x'},
  swing:{n:'Jazz swing',sub:3,k:'x..x..x..x..',r:'x..x.xx..x.x',s:'...x.....x..'},
- waltz:{n:L('Vals|Waltz'),sub:2,sig:'3/4',k:'x.....',s:'..x.x.',h:'x.x.x.'}};
+ waltz:{n:'Vals|Waltz',sub:2,sig:'3/4',k:'x.....',s:'..x.x.',h:'x.x.x.'}};
 const SUBS=[[1,'♩'],[2,'♪♪'],[3,'3'],[4,'♬']];
 let metBar=0,metMuted=false;const PQ=[];
 const metSub=()=>DRUMS[S.msound]?DRUMS[S.msound].sub:(S.msub||1);
@@ -572,12 +590,12 @@ function metStart(){ttBars=0;metBar=0;metMuted=false;PQ.length=0;met.sub=metSub(
  const loop=()=>{if(!met.on){$$('#pbeats .beat').forEach(b=>b.classList.remove('on'));return}const now=ac().currentTime;while(PQ.length&&PQ[0].t<=now){const k=PQ.shift().k;$$('#pbeats .beat').forEach((b,j)=>b.classList.toggle('on',j===k))}requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 function renderMet(el){const[beats,acc]=SIGS[S.sig],drumOn=!!DRUMS[S.msound],M=S.mtr;
  el.innerHTML=`<div class="card center"><div class="beats" id="beats">${Array.from({length:beats},(_,k)=>`<i class="beat ${acc.includes(k)&&metAccent?'acc':''}"></i>`).join('')}</div>
- <div class="bpmrow"><button class="b" data-a="bm" data-d="-1">−</button><div class="bpm" id="bpm">${S.bpm}</div><button class="b" data-a="bm" data-d="1">+</button></div><div class="mut">BPM · <span id="tname">${tempoName(S.bpm)}</span></div>
+ <div class="bpmrow"><button class="b" data-a="bm" data-d="-1" aria-label="−1 BPM">−</button><div class="bpm" id="bpm">${S.bpm}</div><button class="b" data-a="bm" data-d="1" aria-label="+1 BPM">+</button></div><div class="mut">BPM · <span id="tname">${tempoName(S.bpm)}</span></div>
  <input type="range" id="bpmr" min="30" max="240" value="${S.bpm}" class="mt">
  <div class="row center mt"><button class="b" data-a="tap" style="min-width:110px">👆 ${t('tap')}</button><button class="b ${met.on?'':'pri'}" data-a="go" style="min-width:150px">${met.on?'■ '+t('stop'):'▶ '+t('play')}</button></div><div class="mut small mt" id="mstat"></div></div>
  <div class="card"><h3>${t('beatSig')}</h3><div class="chips">${Object.keys(SIGS).map(s=>`<button class="chip ${S.sig===s?'on':''}" data-a="sig" data-v="${s}">${s}</button>`).join('')}</div>
  <h3 class="mt">${L('Alt bölüm|Subdivision')}</h3><div class="chips">${SUBS.map(([n,lb])=>`<button class="chip ${!drumOn&&(S.msub||1)===n?'on':''}" data-a="sub" data-v="${n}" ${drumOn?'disabled style="opacity:.4"':''}>${lb}</button>`).join('')}</div>
- <h3 class="mt">${t('sound')} · ${L('davul ritimleri|drum beats')}</h3><div class="chips wrap"><button class="chip ${!drumOn?'on':''}" data-a="snd" data-v="click">${t('click')}</button>${Object.entries(DRUMS).map(([k,d])=>`<button class="chip ${S.msound===k?'on':''}" data-a="snd" data-v="${k}">🥁 ${esc(d.n)}</button>`).join('')}</div>
+ <h3 class="mt">${t('sound')} · ${L('davul ritimleri|drum beats')}</h3><div class="chips wrap"><button class="chip ${!drumOn?'on':''}" data-a="snd" data-v="click">${t('click')}</button>${Object.entries(DRUMS).map(([k,d])=>`<button class="chip ${S.msound===k?'on':''}" data-a="snd" data-v="${k}">🥁 ${esc(L(d.n))}</button>`).join('')}</div>
  <label><input type="checkbox" id="acc" ${metAccent?'checked':''}> ${t('accent')}</label>
  <label><input type="checkbox" id="mfl" ${S.mflash?'checked':''}> ${L('Görsel flaş|Visual flash')}</label></div>
  <div class="card"><label><input type="checkbox" id="mtron" ${M.on?'checked':''}> <b>🔇 ${L('Ritim antrenörü|Rhythm trainer')}</b></label><div class="mut small">${L('Bazı ölçülerde klik susar, tempoyu sen korursun.|The click drops out for some bars so you keep time yourself.')}</div>
@@ -602,7 +620,7 @@ function renderMet(el){const[beats,acc]=SIGS[S.sig],drumOn=!!DRUMS[S.msound],M=S
   else if(a==='sub'){S.msub=+b.dataset.v;save();restart();renderMet(el)}
   else if(a==='pon'){S.poly.n=+b.dataset.v;save();renderMet(el)}
   else if(a==='snd'){S.msound=b.dataset.v;const d=DRUMS[S.msound];if(d&&d.sig)S.sig=d.sig;else if(d&&S.sig==='3/4'&&d.sub!==2)S.sig='4/4';save();restart();renderMet(el)}
-  else if(a==='psave'){(S.presets=S.presets||[]).push({n:`${S.bpm} · ${S.sig} · ${DRUMS[S.msound]?DRUMS[S.msound].n:t('click')}`,bpm:S.bpm,sig:S.sig,snd:S.msound,sub:S.msub||1});save();renderMet(el)}
+  else if(a==='psave'){(S.presets=S.presets||[]).push({n:`${S.bpm} · ${S.sig} · ${DRUMS[S.msound]?L(DRUMS[S.msound].n):t('click')}`,bpm:S.bpm,sig:S.sig,snd:S.msound,sub:S.msub||1});save();renderMet(el)}
   else if(a==='pdel'){e.stopPropagation();S.presets.splice(+b.dataset.i,1);save();renderMet(el)}
   else if(a==='pl'){const p=S.presets[+b.dataset.i];Object.assign(S,{bpm:p.bpm,sig:p.sig,msound:p.snd,msub:p.sub});save();restart();renderMet(el)}}}
 
@@ -614,7 +632,7 @@ function renderChords(el){const insts=INST.filter(i=>i.id!=='guitar12');if(!inst
  <div class="chips mt">${QKEYS.map(q=>`<button class="chip ${CL.q===q?'on':''}" data-a="q" data-v="${q}">${q||'maj'}</button>`).join('')}</div>
  <div class="card mt"><div class="cname">${esc(chordLabel(ch))}</div><div class="mut small center">${t('chordNotes')}: ${chordPcs(ch).map(pcName).join(' · ')}</div>
  <div class="bigcd">${v?chordSVG(v,ctx.tun,{notes:1,w:'100%'}):`<p class="mut center">${t('noResults')}</p>`}</div>
- <div class="row center"><button class="b sm" data-a="pv">‹</button><span class="mut small">${t('variation')} ${vs.length?CL.v+1:0}/${vs.length}</span><button class="b sm" data-a="nv">›</button><button class="b pri sm" data-a="pl">🔊 ${t('play')}</button><button class="b sm" data-a="ani">🎬 ${t('animShort')}</button></div><div id="anim" class="center"></div></div>
+ <div class="row center"><button class="b sm" data-a="pv" aria-label="${L('Önceki varyasyon|Previous variation')}">‹</button><span class="mut small">${t('variation')} ${vs.length?CL.v+1:0}/${vs.length}</span><button class="b sm" data-a="nv" aria-label="${L('Sonraki varyasyon|Next variation')}">›</button><button class="b pri sm" data-a="pl">🔊 ${t('play')}</button><button class="b sm" data-a="ani">🎬 ${t('animShort')}</button></div><div id="anim" class="center"></div></div>
  <div class="cgrid">${vs.map((x,i)=>`<div class="cbox ${i===CL.v?'on':''}" data-a="sv" data-v="${i}">${chordSVG(x,ctx.tun,{w:'100%'})}</div>`).join('')}</div>`;
  el.onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
   if(a==='ins'){S.chInst=b.dataset.v;save();CL.v=0}else if(a==='root'){CL.root=+b.dataset.v;CL.v=0}else if(a==='q'){CL.q=b.dataset.v;CL.v=0}
@@ -712,7 +730,8 @@ function cstat(name,ok){if(!name)return;const s=S.cstat[name]||(S.cstat[name]={o
 function streak(){const d=new Date();if((S.days[dkey(d)]||0)<60)d.setDate(d.getDate()-1);let n=0;while((S.days[dkey(d)]||0)>=60){n++;d.setDate(d.getDate()-1)}return n}
 function weekMin(){let s=0;const d=new Date();for(let i=0;i<7;i++){s+=S.days[dkey(d)]||0;d.setDate(d.getDate()-1)}return Math.floor(s/60)}
 function updHdr(){const s=streak(),el=$('#hsub');if(el)el.textContent=s?'🔥 '+s:''}
-function practiceActive(){return Mic.on||met.on||TB.on||GAME_ON||REC.on}
+let lastSound=0;
+function practiceActive(){return met.on||TB.on||REC.on||(GAME_ON&&!Mic.on)||((Mic.on||GAME_ON)&&Date.now()-lastSound<8000)}
 function heatHTML(){const goal=(S.goal||15)*60,d=new Date(),wd=(d.getDay()+6)%7;d.setDate(d.getDate()-(77+wd));let s='';const td=today();
  for(let i=0;i<=77+wd;i++){const k=dkey(d),v=S.days[k]||0,l=v<=0?0:v<goal/3?1:v<goal?2:3;s+=`<i class="${l?'l'+l:''} ${k===td?'td':''}" title="${k}: ${Math.round(v/60)} ${t('min')}"></i>`;d.setDate(d.getDate()+1)}return`<div class="heat">${s}</div>`}
 /* ---- Animasyonlu anlatım ---- */
@@ -742,6 +761,8 @@ function renderStudio(){view.innerHTML=`<div class="seg">${[['rec','🎙 '+t('re
  $$('[data-st]',view).forEach(b=>b.onclick=()=>{S.studio=b.dataset.st;save();go('studio')});(S.studio==='detect'?renderDetect:renderRec)($('#stu'))}
 /* ---- Kayıt ---- */
 const REC={on:false,mr:null,chunks:[],t0:0,timer:null,mem:[],urls:[],met:false};
+/* ekranı açık tut: mikrofon ya da metronom çalışırken */
+let WL=null;setInterval(async()=>{const need=!document.hidden&&(Mic.on||met.on||REC.on);try{if(need&&!WL&&navigator.wakeLock){WL=await navigator.wakeLock.request('screen');WL.addEventListener('release',()=>WL=null)}else if(!need&&WL){WL.release();WL=null}}catch(e){}},1000);
 const DB={db:null,open(){if(this.db)return Promise.resolve(this.db);return new Promise((res,rej)=>{const r=indexedDB.open('perde',1);r.onupgradeneeded=()=>r.result.createObjectStore('recs',{keyPath:'id'});r.onsuccess=()=>res(this.db=r.result);r.onerror=()=>rej(r.error)})},
  async all(){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction('recs').objectStore('recs').getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])})}catch(e){return REC.mem}},
  async put(o){try{const db=await this.open();await new Promise(res=>{const tx=db.transaction('recs','readwrite');tx.objectStore('recs').put(o);tx.oncomplete=res;tx.onerror=res})}catch(e){REC.mem.push(o)}},
@@ -750,9 +771,9 @@ const fmtT=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
 const recExt=tp=>/mp4|aac|m4a/.test(tp)?'m4a':/ogg/.test(tp)?'ogg':'webm';
 function saveBlob(name,blob){try{if(window.PerdeAndroid&&PerdeAndroid.saveBase64){const r=new FileReader();r.onload=()=>PerdeAndroid.saveBase64(name,String(r.result).split(',')[1],blob.type||'application/octet-stream');r.readAsDataURL(blob);return}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()}catch(e){toast(t('badFile'))}}
 async function renderRec(el){REC.urls.forEach(u=>URL.revokeObjectURL(u));REC.urls=[];const list=(await DB.all()).sort((a,b)=>b.id-a.id);if(!el.isConnected)return;
- el.innerHTML=`<div class="card center"><button class="recbtn ${REC.on?'on':''}" data-a="rec">${REC.on?'■':'●'}</button><div class="bpm" id="rt" style="font-size:40px;margin-top:8px">${fmtT(REC.on?(Date.now()-REC.t0)/1000:0)}</div><div class="meter"><i id="rl"></i></div>
+ el.innerHTML=`<div class="card center"><button aria-label="${REC.on?L('Durdur|Stop'):L('Kaydı başlat|Start recording')}" class="recbtn ${REC.on?'on':''}" data-a="rec">${REC.on?'■':'●'}</button><div class="bpm" id="rt" style="font-size:40px;margin-top:8px">${fmtT(REC.on?(Date.now()-REC.t0)/1000:0)}</div><div class="meter"><i id="rl"></i></div>
  <div class="mut small">${REC.on?t('recStop'):t('recStart')}</div><label><input type="checkbox" id="rmet" ${REC.met?'checked':''}> ${t('recWithMet')} (${S.bpm} BPM)</label></div>
- <div class="card">${list.length?list.map(r=>{const u=URL.createObjectURL(r.blob);REC.urls.push(u);const d=new Date(r.id);return`<div class="recit"><div class="row"><b class="grow">🎸 ${d.toLocaleDateString()} ${d.toLocaleTimeString().slice(0,5)}</b><span class="mut small">${fmtT(r.dur)}</span><button class="b sm" data-a="dl" data-id="${r.id}">⬇</button><button class="b sm" data-a="rd" data-id="${r.id}">🗑</button></div><audio controls preload="none" src="${u}"></audio></div>`}).join(''):`<div class="mut center">${t('recNone')}</div>`}</div>`;
+ <div class="card">${list.length?list.map(r=>{const u=URL.createObjectURL(r.blob);REC.urls.push(u);const d=new Date(r.id);return`<div class="recit"><div class="row"><b class="grow">🎸 ${d.toLocaleDateString()} ${d.toLocaleTimeString().slice(0,5)}</b><span class="mut small">${fmtT(r.dur)}</span><button class="b sm" data-a="dl" data-id="${r.id}" aria-label="${L('İndir|Download')}">⬇</button><button class="b sm" data-a="rd" data-id="${r.id}" aria-label="${t('del')}">🗑</button></div><audio controls preload="none" src="${u}"></audio></div>`}).join(''):`<div class="mut center">${t('recNone')}</div>`}</div>`;
  $('#rmet').onchange=e=>REC.met=e.target.checked;
  el.onclick=async e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
   if(a==='rec'){if(REC.on)recStop(el);else recStart(el)}
@@ -879,7 +900,7 @@ function renderSettings(){
   if(a==='goal'){S.goal=+b.dataset.v;save();renderSettings()}
   else if(a==='exp'){const txt=backupText(),m=modal(`<h2>${t('exportB')}</h2><textarea readonly id="bkx" style="min-height:120px">${esc(txt)}</textarea><div class="row end mt"><button class="b" data-x>${t('cancel')}</button><button class="b" data-f>💾 ${t('saveFile')}</button><button class="b pri" data-c>📋 ${t('copy')}</button></div>`);$('[data-x]',m).onclick=()=>m.remove();$('[data-c]',m).onclick=()=>copyText(txt);$('[data-f]',m).onclick=()=>saveFile('perde-yedek-'+today()+'.json',txt)}
   else if(a==='imp'){const m=modal(`<h2>${t('importB')}</h2><textarea id="bki" placeholder="${t('pasteHere')}" style="min-height:120px"></textarea><input type="file" id="bkf" accept=".json,application/json,text/plain" hidden><div class="row end mt"><button class="b" data-x>${t('cancel')}</button><button class="b" data-ff>${t('fromFile')}</button><button class="b pri" data-l>${t('load')}</button></div>`);$('[data-x]',m).onclick=()=>m.remove();$('[data-ff]',m).onclick=()=>$('#bkf',m).click();$('#bkf',m).onchange=async e=>{const f=e.target.files[0];if(f){m.remove();restoreBackup(await f.text())}};$('[data-l]',m).onclick=()=>{const v=$('#bki',m).value;m.remove();restoreBackup(v)}}
-  else if(a==='reset')confirmBox(t('sure'),()=>{try{Object.keys(localStorage).filter(k=>k.startsWith('perde.')).forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()})}}
+  else if(a==='reset')confirmBox(t('sure'),()=>{try{Object.keys(localStorage).filter(k=>k.startsWith('perde.')).forEach(k=>localStorage.removeItem(k))}catch(e){}try{if(DB.db)DB.db.close();indexedDB.deleteDatabase('perde')}catch(e){}setTimeout(()=>location.reload(),150)})}}
 
 /* ================= Başlat ================= */
 setInterval(()=>{if(document.hidden||!practiceActive())return;const k=today();S.days[k]=(S.days[k]||0)+5;if(S.days[k]%30===0){save();updHdr()}},5000);
